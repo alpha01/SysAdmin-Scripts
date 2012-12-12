@@ -1,24 +1,18 @@
 #!/bin/bash
 
-VBoxHeadless -s bashninja.org  &
-sleep 15
+virtualbox_vms=(bashninja rubyninja Debian ubuntu Windows_Server_2003 Solaris monitor FreeBSD)
 
-VBoxHeadless -s rubyninja.net &
-sleep 15
 
-VBoxHeadless -s Debian &
-sleep 15
+for vm in ${virtualbox_vms[@]}
+do
+        vm_check=`ps aux |grep -e "/usr/lib/virtualbox/VBoxHeadless -s \$vm$"|awk '{print $2}'`
 
-VBoxHeadless -s ubuntu &
-sleep 15
-
-VBoxHeadless -s Windows_Server_2003 &
-sleep 15
-
-VBoxHeadless -s Solaris &
-sleep 15
-
-VBoxHeadless -s monitor &
-sleep 15
-
-VBoxHeadless -s FreeBSD &
+        if [ "$vm_check" != "" ]
+        then
+                echo "$vm is currently active. PID: $vm_check"
+        else
+                echo "Starting VirtualBox VM: $vm"
+                VBoxHeadless -s $vm &
+                sleep 15
+        fi
+done

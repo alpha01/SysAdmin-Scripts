@@ -1,10 +1,18 @@
 #!/bin/bash
 
-VBoxHeadless -s OpenAFS2 &
-sleep 15
+virtualbox_vms=(dhcp OpenAFS OpenAFS2 spacewalk)
 
-VBoxHeadless -s OpenAFS &
-sleep 15
 
-VBoxHeadless -s dhcp &
-sleep 15
+for vm in ${virtualbox_vms[@]}
+do
+        vm_check=`ps aux |grep -e "/usr/lib/virtualbox/VBoxHeadless -s \$vm$"|awk '{print $2}'`
+
+        if [ "$vm_check" != "" ]
+        then
+                echo "$vm is currently active. PID: $vm_check"
+        else
+                echo "Starting VirtualBox VM: $vm"
+                VBoxHeadless -s $vm &
+                sleep 15
+        fi
+done
