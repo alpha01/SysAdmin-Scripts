@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 STATE_OK=0
 STATE_WARNING=1
