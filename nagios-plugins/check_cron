@@ -5,7 +5,8 @@ STATE_WARNING=1
 STATE_CRITICAL=2
 STATE_UNKNOWN=3
 
-CRON_CHECK=`ps aux | grep crond|grep -v grep|awk '{print $NF}'|grep -e '^crond$'|wc -l`
+CRON_CHECK=`ps aux | grep cron|grep -v grep|awk '{print $NF}'|grep -E -e '^(/usr/sbin/cron|crond)$'|wc -l`
+
 
 case "${CRON_CHECK}" in
         0)
