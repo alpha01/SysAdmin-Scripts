@@ -1,0 +1,45 @@
+#!/usr/bin/env perl
+use strict;
+
+use constant OK => 0;
+use constant WARNING => 1;
+use constant CRITICAL => 2;
+use constant UNKNOWN => 3;
+
+my %THRESHOLDS = (OK => 70, WARNING => 75, CRITICAL => 86);
+
+# Sample output
+# Physical id 0:  +55.0°C  (high = +86.0°C, crit = +100.0°C)
+#Core 0:         +54.0°C  (high = +86.0°C, crit = +100.0°C)
+#Core 1:         +55.0°C  (high = +86.0°C, crit = +100.0°C)
+my @get_current_heat = split "\n", `sensors 2>/dev/null | grep -E -e '(Physical id 0|Core [0-1])'`;
+
+
+my $counter = 0;
+my $output_string;
+
+for my $heat_usage_per_core (@get_current_heat) {
+        $heat_usage_per_core =~ /(.*):\s+\+([0-9]{1,3})/;
+        my $core = $1;
+        my $temp = $2;
+
+
+        if ($temp < $THRESHOLDS{OK}) {
+                $output_string .= "$core - temperature : $temp" . 'C | ';
+                $counter++;
+        } elsif ( ($temp > $THRESHOLDS{OK}) && ($temp >= $THRESHOLDS{WARNING}) && ($temp < $THRESHOLDS{CRITICAL}) ) {
+                print "WARNING! $core temperature: $temp\n";
+                exit(WARNING);
+        } elsif ( ($temp > $THRESHOLDS{OK}) && ($temp >= $THRESHOLDS{WARNING}) && ($temp > $THRESHOLDS{CRITICAL}) ) {
+                print "CRITICAL! $core temperature: $temp\n";
+                exit(CRITICAL);
+        }
+}
+
+if ($counter == 3 ) {
+        print $output_string;
+        exit(OK);
+} else {
+        print "Unable to get all CPU's temperature.\n";
+        exit(UNKNOWN);
+}
