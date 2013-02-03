@@ -30,7 +30,7 @@ for my $heat_usage_per_core (@get_current_heat) {
         } elsif ( ($temp > $THRESHOLDS{OK}) && ($temp >= $THRESHOLDS{WARNING}) && ($temp < $THRESHOLDS{CRITICAL}) ) {
                 print "WARNING! $core temperature: $temp\n";
                 exit(WARNING);
-        } elsif ( ($temp > $THRESHOLDS{OK}) && ($temp >= $THRESHOLDS{WARNING}) && ($temp > $THRESHOLDS{CRITICAL}) ) {
+        } elsif ( ($temp > $THRESHOLDS{OK}) && ($temp > $THRESHOLDS{WARNING}) && ($temp >= $THRESHOLDS{CRITICAL}) ) {
                 print "CRITICAL! $core temperature: $temp\n";
                 exit(CRITICAL);
         }
