@@ -68,7 +68,7 @@ if ($verbose < 1 || $verbose > 3) {
 	exit $ERRORS{$state};
 }
 
-my $statcommand="zpool list $pool";
+my $statcommand="sudo /usr/local/sbin/zpool list $pool";
 
 if (! open STAT, "$statcommand|") {
 	print ("$state '$statcommand' command returns no result! NOTE: This plugin needs OS support for ZFS, and execution with root privileges.\n");
@@ -111,7 +111,7 @@ if ($health eq "ONLINE" ) {
 ## flag to detect section of zpool status involving our zpool
 my $poolfind=0;
 
-$statcommand="zpool status $pool";
+$statcommand="sudo /usr/local/sbin/zpool status $pool";
 if (! open STAT, "$statcommand|") {
 	$state = 'CRITICAL';
 	print ("$state '$statcommand' command returns no result! NOTE: This plugin needs OS support for ZFS, and execution with root privileges.\n");
