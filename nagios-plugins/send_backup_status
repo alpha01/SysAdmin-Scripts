@@ -1,0 +1,14 @@
+#!/bin/bash
+# Tony's humble Nagios Service Check Acceptor template.
+
+
+SERVICE=$1
+EXIT_STATUS=$2
+MESSAGE=$3
+
+NAGIOS_HOST="NAGIOS-IP-HERE"
+
+CFG="/usr/local/nagios/etc/send_nsca.cfg"
+CMD="$HOSTNAME;$SERVICE;$EXIT_STATUS;$MESSAGE"
+
+echo $CMD | /usr/local/nagios/bin/send_nsca -H $NAGIOS_HOST -d ';' -c $CFG
