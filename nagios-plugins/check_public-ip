@@ -6,9 +6,9 @@ STATE_CRITICAL=2
 STATE_UNKNOWN=3
 
 current_ip="YOUR-IP-ADDRESS-HERE"
-ip=`curl -s ifconfig.me`
+ip=`curl -connect-timeout 30 -s ifconfig.me`
 
-if [ "$current_ip" != "$ip" ] && [ "$ip" != "" ]
+if [ "$current_ip" != "$ip" ] && [ "$ip" != "" ] && [ "$ip" != " " ]
 then
         if [[ "$ip" =~ "Service Unavailable" ]] || [[ "$ip" =~ "html" ]]
         then

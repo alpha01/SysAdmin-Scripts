@@ -1,6 +1,6 @@
 #!/bin/bash
 
-virtualbox_vms=(dhcp OpenAFS OpenAFS2 spacewalk)
+virtualbox_vms=(dhcp OpenAFS OpenAFS2 spacewalk monitor2.rubyninja.org backup.rubyninja.org)
 
 
 for vm in ${virtualbox_vms[@]}

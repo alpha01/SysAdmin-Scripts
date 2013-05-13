@@ -1,6 +1,6 @@
 #!/bin/bash
 
-virtualbox_vms=(bashninja.org rubyninja.net Debian ubuntu Windows_Server_2003 Solaris monitor FreeBSD FreeBSD_9 OpenBSD)
+virtualbox_vms=(bashninja.org rubyninja.net Debian ubuntu Windows_Server_2003 Solaris monitor FreeBSD FreeBSD_9 OpenBSD login.rubyninja.org email)
 
 
 for vm in ${virtualbox_vms[@]}
