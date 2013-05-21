@@ -8,13 +8,13 @@ STATE_UNKNOWN=3
 current_ip="YOUR-IP-ADDRESS-HERE"
 ip=`curl -connect-timeout 30 -s ifconfig.me`
 
-if [ "$current_ip" != "$ip" ] && [ "$ip" != "" ] && [ "$ip" != " " ]
+if [ "$current_ip" != "$ip" ] || [ -z "$ip" ]
 then
         if [[ "$ip" =~ "Service Unavailable" ]] || [[ "$ip" =~ "html" ]]
         then
                 echo "IP service monitoring is unavailable."
                 exit $STATE_WARNING
-        elif [[ "$ip"  =~ "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" ]]
+        elif [[ "$ip"  =~ [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} ]]
         then
                 echo "ALERT: Public IP has changed. NEW IP: $ip"
                 exit $STATE_CRITICAL
