@@ -23,7 +23,7 @@ DB_PASSWD = ''
 
 
 
-backup_dir = '/server/antoniobaltazar.com'
+backup_dir = '/backups/blog'
 directory_name = Time.now.strftime('%Y_%B')
 backup_file_name = 'backup_' + Time.now.strftime('%Y%m%d')
 
