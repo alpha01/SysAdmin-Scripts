@@ -11,7 +11,7 @@ echo "Creating ZFS snapshot.."
 
 if [ $? -eq 0 ]
 then
-        echo "Successfully created ZFS snapshot: $ZFS_POOL/$MACHINE@$SNAPSHOT_NAME"
+        printf "Successfully created ZFS snapshot: $ZFS_POOL/$MACHINE@$SNAPSHOT_NAME \n\n\n"
         echo "Available snapshots for $ZFS_POOL/$MACHINE:"
         /usr/local/sbin/zfs list -r -t snapshot -o name,creation,used "$ZFS_POOL/$MACHINE"
         exit 0
