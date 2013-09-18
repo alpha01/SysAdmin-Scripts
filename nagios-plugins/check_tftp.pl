@@ -9,7 +9,7 @@ use Getopt::Long;
 
 
 my %options;
-GetOptions(\%options, "host|H:s", "port|p:i",  "file|f:s", "help");
+GetOptions(\%options, "host|H:s", "port|p:i",  "rport|R:s","file|f:s", "help");
 
 
 if ($options{help}) {
@@ -18,7 +18,9 @@ if ($options{help}) {
 } elsif ($options{host} && $options{port} && $options{file}) { 
 	chdir('/tmp');
 
-	my $cmd = `/usr/bin/tftp -R $options{port}:$options{port} $options{host} $options{port} -c get $options{file}`;
+	my $cmd_str = ( $options{rport} ?  "/usr/bin/tftp -R $options{rport}:$options{rport} $options{host} $options{port} -c get $options{file}" : "/usr/bin/tftp $options{host} $options{port} -c get $options{file}");
+
+	my $cmd = `$cmd_str`;
 	if ($? != 0) {
 		print "CRITICAL: $cmd";
 		exit 2;
@@ -51,6 +53,9 @@ Syntax: $0 [--help|-H=<TFTP server> --port=<TFTP Port> --file=<Test file>]
    --port | -p  : TFTP Port.
    --file | -m  : Test file that will be downloaded.
    --help | -h  : This help message.
+
+Optionally,
+   --rport | -R : Explicitly force the reverse originating connection's port.
 
 EOF
 }
