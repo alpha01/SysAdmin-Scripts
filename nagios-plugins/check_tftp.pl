@@ -23,6 +23,7 @@ if ($options{help}) {
 	my $cmd = `$cmd_str`;
 	if ($? != 0) {
 		print "CRITICAL: $cmd";
+		system("rm -f /tmp/$options{file}");
 		exit 2;
 	} else {
 		if (! -z "/tmp/$options{file}" ) {
