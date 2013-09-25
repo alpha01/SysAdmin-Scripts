@@ -20,11 +20,14 @@
 # USA
 
 
+
 use strict;
 use Getopt::Long;
 use Filesys::Df;
 use POSIX;
-
+use File::Basename;
+use lib dirname(__FILE__);
+use AddToDHCP;
 
 
 
@@ -33,6 +36,7 @@ GetOptions(\%options, "name|n:s", "disk|d:i",  "memory|m:i", "ostype|o:s", "help
 
 
 my $VIRTUAL_MACHINES_LOCATIONS = '/home/tony/VirtualBox VMs';
+my $DHCP_SERVER = 'DHCP-SERVER-IP-HERE';
 
 
 if ($options{help}) {
@@ -42,10 +46,11 @@ if ($options{help}) {
 
 	exit 1 unless check_available_memory();
 	exit 1 unless ostype();
-	exit 1 unless createvm();
-	exit 1 unless modifyvm();
-	exit 1 unless create_hd();
-	exit 1 unless configure_hd();
+	exit 1  unless createvm();
+	clean_up() unless modifyvm();
+	clean_up() unless create_hd();
+	clean_up() unless configure_hd();
+	push_to_dhcp();
 
 } else {
 	usage();
@@ -144,7 +149,6 @@ sub createvm {
 	print "Creating virtual machine... \n\tName: $options{name}\n\tMemory: $options{memory}\n\tDisk Size: $options{disk}\n\tOS Type: $options{ostype}\n\n\n";
 
 	system("VBoxManage createvm --name '$options{name}' --ostype $options{ostype} --register 2>/dev/null");
-
 	if ($? != 0) {
 		print "Failed to create Virtual Machine.\n";
 		return 0;
@@ -209,3 +213,29 @@ sub modifyvm {
 	}
 }
 
+
+sub push_to_dhcp {
+	chomp (my $mac_address_vm = `VBoxManage showvminfo '$options{name}'|grep MAC|awk '{print \$4}'`);
+	chop($mac_address_vm); #gets rid of trailing comman (,)
+	my $mac_address = join(':', grep {length > 0} split(/(..)/, $mac_address_vm));
+	
+	my $push_to_dhcp_ob = AddToDHCP->new;
+	$push_to_dhcp_ob->name($options{name});
+	$push_to_dhcp_ob->hardware($mac_address);
+	$push_to_dhcp_ob->dhcp($DHCP_SERVER);
+
+	$push_to_dhcp_ob->add_to_dhcp;	
+}
+
+
+sub clean_up {
+	print "Cleaning up failed VM installation/configuration...\n\n";
+
+	system("VBoxManage unregistervm '$options{name}' --delete");
+	if ($? != 0) {
+		print "Clean up failed, something is seriously fucked.\n";
+		exit 1;
+	} else {
+		exit 0;
+	}
+}
