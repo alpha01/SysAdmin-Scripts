@@ -27,7 +27,7 @@ if raid_state.empty?
 	exit UNKNOWN
 end
 
-if /^(clean(, checking)?|active)$/.match(raid_state)
+if /^(clean|active)(, (resyncing|checking))?$/.match(raid_state)
 	print "RAID OK: #{raid_state}"
 	exit OK
 elsif /degraded/i.match(raid_state)
