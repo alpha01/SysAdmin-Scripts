@@ -1,0 +1,14 @@
+---
+- hosts: git
+  tasks:
+  - name: Installing git package
+    yum: name=git state=latest
+
+  - name: Creating developers group
+    group: name=developers state=present
+
+  - name: Creating git user
+    user: name=git group=developers home=/home/git shell=/sbin/nologin
+
+  - name: Updating /home/git permissions
+    file: path=/home/git mode=2770
