@@ -14,7 +14,6 @@ GetOptions(\%options, "host|H:s", "port|p:i",  "rport|R:s","file|f:s", "help");
 
 if ($options{help}) {
 	usage();
-	exit 0;
 } elsif ($options{host} && $options{port} && $options{file}) { 
 	chdir('/tmp');
 
@@ -59,4 +58,5 @@ Optionally,
    --rport | -R : Explicitly force the reverse originating connection's port.
 
 EOF
+exit 3;
 }
