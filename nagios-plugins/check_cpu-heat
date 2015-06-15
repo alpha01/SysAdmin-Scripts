@@ -12,7 +12,7 @@ my %THRESHOLDS = (OK => 70, WARNING => 75, CRITICAL => 86);
 # Physical id 0:  +55.0°C  (high = +86.0°C, crit = +100.0°C)
 #Core 0:         +54.0°C  (high = +86.0°C, crit = +100.0°C)
 #Core 1:         +55.0°C  (high = +86.0°C, crit = +100.0°C)
-my @get_current_heat = split "\n", `sensors 2>/dev/null | grep -E -e '(Physical id 0|Core [0-1])'`;
+my @get_current_heat = split "\n", `sensors 2>/dev/null | grep -E -e '(Physical id 0|Core [0-9]{1,2})'`;
 
 
 my $counter = 0;
@@ -36,7 +36,7 @@ for my $heat_usage_per_core (@get_current_heat) {
         }
 }
 
-if ($counter == 3 ) {
+if ($counter == scalar @get_current_heat) {
         print $output_string;
         exit(OK);
 } else {
