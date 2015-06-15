@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+# Tony Baltazar, June 2015. root[@]rubyninja.org
 
 OK = 0
 WARNING = 1
@@ -12,31 +13,49 @@ UNKNOWN = 3
 #2      The array has multiple failed devices such that it is unusable.
 #4      There was an error while trying to get information about the device.
 
-raid_device = '/dev/md0'
 
-get_raid_output = %x[sudo mdadm --detail #{raid_device}].lines.to_a
+def main(raid_device)
+  output_message = ""
+  warning = 0
+  critical = 0
+  unknown = 0
 
+  raid_device.each do |device|
+    get_raid_output = %x[sudo mdadm --detail #{device}].lines.to_a
+    get_raid_status = get_raid_output.grep(/\sState\s:\s/).to_s.match(/:\s(.*)\\n\"\]/)
 
-get_raid_status = get_raid_output.grep(/\sState\s:\s/).to_s.match(/:\s(.*)\\n\"\]/)
-raid_state = get_raid_status[1].strip
+    raid_state = get_raid_status[1].strip
 
+    if raid_state.empty?
+      output_message.concat(" Unable to get RAID status!")
+      unknown += 1
+    end
 
+    if /^(clean|active)(, (resyncing|checking))?$/.match(raid_state)
+      output_message.concat(" #{device} RAID OK: #{raid_state}")
+    elsif /degraded/i.match(raid_state)
+      output_message.concat(" #{device} WARNING RAID: #{raid_state}")
+      warning += 1
+    elsif /fail/i.match(raid_state)
+      output_message.concat(" #{device} CRITICAL RAID: #{raid_state}")
+      critical += 1
+    else
+      output_mesage.concat(" UNKNOWN RAID detected: #{raid_state}")
+      unknown += 1
+    end
+  end
 
-if raid_state.empty?
-	print "Unable to get RAID status!"
-	exit UNKNOWN
+  return { :message => output_message, :warning => warning, :critical => critical, :unknown => unknown}
 end
 
-if /^(clean|active)(, (resyncing|checking))?$/.match(raid_state)
-	print "RAID OK: #{raid_state}"
-	exit OK
-elsif /degraded/i.match(raid_state)
-	print "WARNING RAID: #{raid_state}"
-	exit WARNING
-elsif /fail/i.match(raid_state)
-	print "CRITICAL RAID: #{raid_state}"
-	exit CRITICAL
-else
-	print "UNKNOWN RAID detected: #{raid_state}"
-	exit UNKNOWN
+begin
+  mdraid_check = main(['/dev/md2', '/dev/md4'])
+  puts mdraid_check[:message]
+  exit CRITICAL unless mdraid_check[:critical] == 0
+  exit WARNING unless mdraid_check[:warning] == 0
+  exit UNKNOWN unless mdraid_check[:unknown] == 0
+  exit OK
+rescue
+  puts "Something terribly went wrong.."
+  exit UNKNOWN
 end
