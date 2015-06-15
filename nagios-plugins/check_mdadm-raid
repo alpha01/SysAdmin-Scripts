@@ -27,7 +27,7 @@ def main(raid_device)
     raid_state = get_raid_status[1].strip
 
     if raid_state.empty?
-      output_message.concat(" Unable to get RAID status!")
+      output_message.concat(" Unable to get #{device} RAID status!")
       unknown += 1
     end
 
