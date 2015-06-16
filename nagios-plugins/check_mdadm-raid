@@ -55,7 +55,7 @@ begin
   exit WARNING unless mdraid_check[:warning] == 0
   exit UNKNOWN unless mdraid_check[:unknown] == 0
   exit OK
-rescue
-  puts "Something terribly went wrong.."
+rescue => error_message
+  puts error_message.backtrace.join("\n")
   exit UNKNOWN
 end
