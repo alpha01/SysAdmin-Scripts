@@ -31,7 +31,7 @@ def main(raid_device)
       unknown += 1
     end
 
-    if /^(clean|active)(, (resyncing|checking))?$/.match(raid_state)
+    if /^(clean|active)(, (resyncing\s\(DELAYED\)|checking))?$/.match(raid_state)
       output_message.concat(" #{device} RAID OK: #{raid_state}")
     elsif /degraded/i.match(raid_state)
       output_message.concat(" #{device} WARNING RAID: #{raid_state}")
@@ -40,7 +40,7 @@ def main(raid_device)
       output_message.concat(" #{device} CRITICAL RAID: #{raid_state}")
       critical += 1
     else
-      output_mesage.concat(" UNKNOWN RAID detected: #{raid_state}")
+      output_message.concat(" UNKNOWN RAID detected: #{raid_state}")
       unknown += 1
     end
   end
