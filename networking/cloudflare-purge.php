@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
-# Simple Cloudfare cache purging script.
+# Simple Cloudflare cache purging script.
+# NOTE: This script only works with accounts with less than 100 domains.
 # Written by: Tony Baltazar. July 2019.
 # Email: root[@]rubyninja.org
 
